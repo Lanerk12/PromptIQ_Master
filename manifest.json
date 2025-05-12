@@ -1,0 +1,54 @@
+{
+  "manifest_version": 3,
+  "name": "Prompt Enhancer (PromptIQ)",
+  "version": "1.0",
+  "description": "Grammarly for LLMs—enhance your prompts inline using the Side Panel.",
+  "permissions": [
+    "storage",      
+    "activeTab",   
+    "scripting",  
+    "tabs",         
+    "sidePanel"     
+   
+  ],
+  "host_permissions": [
+    "https://api.anthropic.com/*", 
+    "*://chat.openai.com/*",
+    "*://chatgpt.com/*",          
+    "*://*.jenova.ai/*",          
+    "*://chat.deepseek.com/*"
+  
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://chat.openai.com/*",
+        "*://chatgpt.com/*",
+        "*://*.jenova.ai/*",
+        "*://chat.deepseek.com/*"
+      ],
+      "js": ["content.js"],
+      "css": []
+    }
+  ],
+  "action": {
+    "default_title": "Open PromptIQ Panel"
+  },
+  "side_panel": {
+    "default_path": "panel.html"
+  },
+  "web_accessible_resources": [
+    {
+       "resources": [
+           "panel.html",
+           "panel.js",
+           "../node_modules/firebase/firebase-app-compat.js",
+           "../node_modules/firebase/firebase-auth-compat.js"
+        ],
+        "matches": ["<all_urls>"] 
+    }
+  ]
+}

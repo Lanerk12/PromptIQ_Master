@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PromptIQ Panel</title>
+    <style>
+        /* Basic styling - feel free to customize */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            padding: 15px;
+            min-width: 320px; /* Ensure panel has reasonable width */
+            background-color: #f8f9fa;
+            color: #212529;
+            font-size: 14px;
+            margin: 0;
+        }
+        h3, h4 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: #007bff;            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 5px;
+        }
+        h3 { font-size: 1.2em; }
+        h4 { font-size: 1.0em; margin-top: 15px; }
+
+        label {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: 500;
+            font-size: 0.9em;
+            color: #495057;
+        }
+        input[type="email"],
+        input[type="password"],
+        textarea {
+            width: 100%;
+            padding: 8px 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 1em;
+            box-sizing: border-box;
+        }
+        textarea {
+            resize: vertical;
+            min-height: 60px;
+            background-color: #e9ecef; /* Slightly different bg for readonly */
+        }
+        textarea:read-only {
+            cursor: default;
+        }        button {
+            padding: 9px 15px;
+            margin-right: 8px;
+            margin-bottom: 8px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: white;
+            font-size: 0.95em;
+            cursor: pointer;
+            transition: background-color 0.2s ease, opacity 0.2s ease;
+        }
+        button:hover:not(:disabled) {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #adb5bd;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        #logoutButton {
+             background-color: #dc3545;
+             margin-left: auto; /* Push logout to the right */
+             margin-right: 0;        }
+        #logoutButton:hover:not(:disabled) {
+             background-color: #c82333;
+        }
+
+        /* Status message styling */
+        .status-message {
+            padding: 8px 12px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            font-weight: 500;
+            border: 1px solid transparent;
+            min-height: 1.2em; /* Prevent layout shifts */
+            text-align: center;
+        }
+        .status-info { color: #004085; background-color: #cce5ff; border-color: #b8daff; }
+        .status-success { color: #155724; background-color: #d4edda; border-color: #c3e6cb; }
+        .status-error { color: #721c24; background-color: #f8d7da; border-color: #f5c6cb; }
+        .status-loading { color: #004085; background-color: #cce5ff; border-color: #b8daff; font-style: italic; }        /* Section visibility */
+        #authSection, #loggedInSection, #enhancerSection, #separator {
+            margin-bottom: 15px;
+        }
+        #loggedInSection, #enhancerSection, #separator {
+            display: none; /* Hidden by default, shown via JS */
+        }
+
+        #loggedInSection {
+            display: flex; /* Use flex to align items */
+            align-items: center;
+            padding: 10px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+        }
+        #userEmail {
+            font-weight: bold;
+            margin-right: 10px; /* Space between email and logout */
+            word-break: break-all;
+        }
+        .separator {
+            border-top: 1px solid #dee2e6;
+            margin: 15px 0;
+        }
+        .preview-box {
+            margin-bottom: 10px;
+        }
+        .slider-container {
+            margin-bottom: 15px;            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .slider-container label {
+            margin-bottom: 0;
+            white-space: nowrap;
+        }
+        .slider-container input[type="range"] {
+            flex-grow: 1;
+            margin: 0;
+            cursor: pointer;
+        }
+        .slider-container span {
+            font-weight: bold;
+            min-width: 15px;
+            text-align: right;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+        .button-group button {
+            flex-grow: 1;
+            margin: 0;
+        }
+
+    </style>
+</head>
+<body>
+    <h3>Prompt Enhancer (PromptIQ)</h3>    <!-- Status Message Area -->
+    <!-- CORRECT ID: status -->
+    <div id="status" class="status-message status-info">Initializing...</div>
+
+    <!-- Authentication Section -->
+    <!-- CORRECT ID: authSection -->
+    <div id="authSection">
+        <h4>Login / Sign Up</h4>
+        <label for="emailInput">Email:</label>
+        <!-- CORRECT ID: emailInput -->
+        <input type="email" id="emailInput" placeholder="Enter your email">
+
+        <label for="passwordInput">Password:</label>
+        <!-- CORRECT ID: passwordInput -->
+        <input type="password" id="passwordInput" placeholder="Enter your password (min 6 chars)">
+
+        <!-- CORRECT ID: loginButton -->
+        <button id="loginButton">Login</button>
+        <!-- CORRECT ID: signupButton -->
+        <button id="signupButton">Sign Up</button>
+        <!-- CORRECT ID: authError -->
+        <div id="authError" class="status-message status-error" style="display: none;"></div> <!-- Specific area for auth errors, hidden initially -->
+    </div>
+
+    <!-- Logged In Info -->
+    <!-- CORRECT ID: loggedInSection -->
+    <div id="loggedInSection">
+        Logged in as: <span id="userEmail"></span> <!-- CORRECT ID: userEmail -->
+        <!-- CORRECT ID: logoutButton -->        <button id="logoutButton">Logout</button>
+    </div>
+
+    <!-- Separator -->
+    <!-- CORRECT ID: separator -->
+    <div id="separator" class="separator"></div>
+
+    <!-- Enhancer Section (Shown when logged in) -->
+    <!-- CORRECT ID: enhancerSection -->
+    <div id="enhancerSection">
+        <h4>Prompt Enhancer</h4>
+
+        <!-- Strength Slider -->
+        <div class="slider-container">
+            <label for="strengthSlider">Strength:</label>
+            <!-- CORRECT ID: strengthSlider -->
+            <input type="range" id="strengthSlider" min="1" max="5" value="3">
+            <!-- CORRECT ID: strengthValue -->
+            <span id="strengthValue">3</span>
+        </div>
+
+        <!-- Preview Boxes -->
+        <div class="preview-box">
+            <label for="originalPreviewBox">Original Input:</label>
+            <!-- CORRECT ID: originalPreviewBox -->
+            <textarea id="originalPreviewBox" rows="4" readonly placeholder="Waiting for input from page..."></textarea>
+        </div>
+
+        <div class="preview-box">
+            <label for="enhancedPreviewBox">Enhanced Prompt:</label>
+            <!-- CORRECT ID: enhancedPreviewBox -->
+            <textarea id="enhancedPreviewBox" rows="6" readonly placeholder="Enhanced prompt will appear here..."></textarea>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="button-group">
+            <!-- CORRECT ID: enhanceButton -->
+            <button id="enhanceButton" disabled>Enhance</button>            <!-- CORRECT ID: pasteButton -->
+            <button id="pasteButton" disabled>Paste into Page</button>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <!-- IMPORTANT: Verify these paths are correct relative to your extension's root directory -->
+    <!-- If panel.html is in the root, these should be in the root too -->
+<!-- Path goes one level up from VSCode folder, then into node_modules -->    <script src="../node_modules/firebase/firebase-app-compat.js"></script>
+<script src="../node_modules/firebase/firebase-auth-compat.js"></script>
+<!-- Add other Firebase services (like firestore-compat.js) here if needed, using the same ../node_modules path -->
+
+<!-- Your Panel Script (Path relative to panel.html) -->
+<script src="./panel.js"></script>
+
+</body>
+</html>
